@@ -14,6 +14,10 @@ export class UserEditComponent implements OnInit {
   user: User
   formUser: User;
   password: string;
+  password2: string;
+  nameIsValid = false;
+  passwordIsValid = false;
+  passwordIsSame = false;
 
   message: string;
 
@@ -22,11 +26,14 @@ export class UserEditComponent implements OnInit {
 
   ngOnInit(): void {
     this.formUser = Object.assign({}, this.user);
+    this.checkIfNameIsValid();
+    this.checkIfPasswordIsValid();
+
   }
 
   onSubmit() {
     if (this.formUser.id == null) {
-      this.dataService.addUser(this.formUser,this.password).subscribe(
+      this.dataService.addUser(this.formUser, this.password).subscribe(
         (user) => { this.router.navigate(['admin', 'users'], { queryParams: { id: this.formUser.id, action: 'view' } }) }
       );
     } else {
@@ -34,6 +41,30 @@ export class UserEditComponent implements OnInit {
         (user) => { this.router.navigate(['admin', 'users'], { queryParams: { id: this.formUser.id, action: 'view' } }) }
       );
     }
-
   }
+
+  checkIfNameIsValid() {
+    if (this.formUser.name) {
+
+      this.nameIsValid = this.formUser.name.trim().length > 0;
+    } else {
+      this.nameIsValid = false;
+    }
+  }
+
+  checkIfPasswordIsValid() {
+    if (this.formUser.id != null) {
+      this.passwordIsSame = true;
+      this.passwordIsValid = true;
+    } else {
+      this.passwordIsSame = this.password === this.password2;
+      if (this.password) {
+        this.passwordIsValid = this.password.trim().length > 0;
+      } else {
+        this.passwordIsValid = false;
+      }
+    }
+  }
+
+
 }
