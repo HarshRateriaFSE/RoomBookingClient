@@ -11,13 +11,15 @@ import { User } from 'src/app/model/User';
 export class UsersComponent implements OnInit {
 
   users: Array<User>;
-  userSelected : User;
+  userSelected: User;
   constructor(private dataService: DataService,
     private route: ActivatedRoute,
     private router: Router) { }
 
   ngOnInit(): void {
-    this.users = this.dataService.users;
+    this.dataService.getUsers().subscribe(
+      (next) => this.users = next
+    );
     this.route.queryParams.subscribe(
       (param) => {
         const id = param['id'];
