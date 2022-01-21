@@ -12,14 +12,30 @@ export class DataService {
   private users: Array<User>;
 
   getRooms(): Observable<Array<Room>> {
-    return of(this.rooms); 
+    return of(this.rooms);
   }
 
   getUsers(): Observable<Array<User>> {
     return of(this.users);
-
   }
 
+  updateUser(user: User): Observable<User> {
+    const originalUser: User = this.users.find(u => u.id === user.id) as User;
+    originalUser.name = user.name;
+    return of(originalUser);
+  }
+
+  addUser(newUser: User, password: string): Observable<User> {
+    let id = 0;
+    for (const user of this.users) {
+      if (user.id > id) {
+        id = user.id;
+      }
+    }
+    newUser.id = id + 1;
+    this.users.push(newUser);
+    return of(newUser);
+  }
   constructor() {
     this.rooms = new Array<Room>();
     const room1 = new Room();
