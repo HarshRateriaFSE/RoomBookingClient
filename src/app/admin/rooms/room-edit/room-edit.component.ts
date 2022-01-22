@@ -1,5 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { DataService } from 'src/app/data.service';
 import { Layout, LayoutCapacity, Room } from 'src/app/model/Room';
 
 @Component({
@@ -17,24 +19,27 @@ export class RoomEditComponent implements OnInit {
 
 
 
-  roomForm = new FormGroup(
-    {
-      roomName: new FormControl('roomName'),
-      roomLocation: new FormControl('roomLocation')
-    }
-  );
+  roomForm: FormGroup;
 
 
-  constructor() { }
+  constructor(private formBuilder: FormBuilder, private dataService: DataService, private router: Router) { }
 
   ngOnInit(): void {
-    this.roomForm.patchValue({
-      roomName: this.room.name,
-      roomLocation: this.room.location
-    });
+
+    this.roomForm = this.formBuilder.group(
+      {
+        roomName: [this.room.name, Validators.required],
+        roomLocation: [this.room.location, [Validators.required, Validators.minLength(2)]],
+
+      }
+    );
+
+
 
     for (const layout of this.layouts) {
-      this.roomForm.addControl(`layout${layout}`, new FormControl(`layout${layout}`));
+      const layoutCapacity = this.room.capacities.find(lc => lc.layout === this.layoutEnum[layout]);
+      const initialCapacity = layoutCapacity?.capacity;
+      this.roomForm.addControl(`layout${layout}`, this.formBuilder.control(initialCapacity));
     }
   }
 
@@ -48,7 +53,22 @@ export class RoomEditComponent implements OnInit {
       layoutCapacity.capacity = this.roomForm.controls[`layout${layout}`].value;
       this.room.capacities.push(layoutCapacity);
     }
-    console.log(this.room);
+    if (this.room.id != null) {
+      this.dataService.updateRoom(this.room).subscribe(
+        room => {
+          this.router.navigate(['admin', 'rooms'], { queryParams: { id: room.id, action: 'view' } });
+        }
+      );
+    }else{
+      this.dataService.addRoom(this.room).subscribe(
+        room => {
+          this.router.navigate(['admin', 'rooms'], { queryParams: { id: room.id, action: 'view' } });
+        }
+      );
+    }
 
   }
+
+
 }
+
