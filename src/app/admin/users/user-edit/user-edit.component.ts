@@ -1,6 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { DataService } from 'src/app/data.service';
+import { FormResetService } from 'src/app/form-reset.service';
 import { User } from 'src/app/model/User';
 
 @Component({
@@ -8,7 +10,7 @@ import { User } from 'src/app/model/User';
   templateUrl: './user-edit.component.html',
   styleUrls: ['./user-edit.component.css']
 })
-export class UserEditComponent implements OnInit {
+export class UserEditComponent implements OnInit, OnDestroy {
 
   @Input()
   user: User
@@ -21,14 +23,28 @@ export class UserEditComponent implements OnInit {
 
   message: string;
 
+  resetEventSubscription: Subscription;
+
   constructor(private dataService: DataService,
-    private router: Router) { }
+    private router: Router,
+    private formResetService: FormResetService,) { }
+
 
   ngOnInit(): void {
+    this.initializeform();
+    this.resetEventSubscription = this.formResetService.resetUserFormEvent.subscribe(
+      user => {
+        this.user = user;
+        this.initializeform();
+      }
+    )
+
+  }
+
+  initializeform() {
     this.formUser = Object.assign({}, this.user);
     this.checkIfNameIsValid();
     this.checkIfPasswordIsValid();
-
   }
 
   onSubmit() {
@@ -65,6 +81,8 @@ export class UserEditComponent implements OnInit {
       }
     }
   }
-
+  ngOnDestroy(): void {
+    this.resetEventSubscription.unsubscribe();
+  }
 
 }

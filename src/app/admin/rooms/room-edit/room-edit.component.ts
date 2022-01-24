@@ -1,7 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { DataService } from 'src/app/data.service';
+import { FormResetService } from 'src/app/form-reset.service';
 import { Layout, LayoutCapacity, Room } from 'src/app/model/Room';
 
 @Component({
@@ -9,7 +11,7 @@ import { Layout, LayoutCapacity, Room } from 'src/app/model/Room';
   templateUrl: './room-edit.component.html',
   styleUrls: ['./room-edit.component.css']
 })
-export class RoomEditComponent implements OnInit {
+export class RoomEditComponent implements OnInit, OnDestroy {
 
   @Input()
   room: Room
@@ -17,15 +19,30 @@ export class RoomEditComponent implements OnInit {
   layouts = Object.keys(Layout);
   layoutEnum = Layout as any;
 
-
+  resetEventSubscription: Subscription;
 
   roomForm: FormGroup;
 
 
-  constructor(private formBuilder: FormBuilder, private dataService: DataService, private router: Router) { }
+
+
+  constructor(private formBuilder: FormBuilder,
+    private dataService: DataService,
+    private router: Router,
+    private formResetService: FormResetService) { }
+  
 
   ngOnInit(): void {
+    this.initializeForm();
+    this.resetEventSubscription = this.formResetService.resetRoomFormEvent.subscribe(
+      room => {
+        this.room = room;
+        this.initializeForm();
+      }
+    )
+  }
 
+  initializeForm() {
     this.roomForm = this.formBuilder.group(
       {
         roomName: [this.room.name, Validators.required],
@@ -59,7 +76,7 @@ export class RoomEditComponent implements OnInit {
           this.router.navigate(['admin', 'rooms'], { queryParams: { id: room.id, action: 'view' } });
         }
       );
-    }else{
+    } else {
       this.dataService.addRoom(this.room).subscribe(
         room => {
           this.router.navigate(['admin', 'rooms'], { queryParams: { id: room.id, action: 'view' } });
@@ -67,6 +84,10 @@ export class RoomEditComponent implements OnInit {
       );
     }
 
+  }
+
+  ngOnDestroy(): void {
+    this.resetEventSubscription.unsubscribe();
   }
 
 
