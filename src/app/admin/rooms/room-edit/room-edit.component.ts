@@ -17,7 +17,7 @@ export class RoomEditComponent implements OnInit, OnDestroy {
   room: Room
 
   layouts = Object.keys(Layout);
-  layoutEnum = Layout as any;
+  layoutEnum = Layout;
 
   resetEventSubscription: Subscription;
 

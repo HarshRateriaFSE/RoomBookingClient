@@ -24,7 +24,7 @@ export class DataService {
   }
 
   updateUser(user: User): Observable<User> {
-    const originalUser: User = this.users.find(u => u.id === user.id) as User;
+    const originalUser: User = this.users.find(u => u.id === user.id) ;
     originalUser.name = user.name;
     return of(originalUser);
   }
@@ -42,7 +42,7 @@ export class DataService {
   }
 
   updateRoom(room: Room): Observable<Room> {
-    const originalRoom: Room = this.users.find(r => r.id === room.id) as Room;
+    const originalRoom: Room = this.rooms.find(r => r.id === room.id);
     originalRoom.name = room.name;
     originalRoom.location = room.location;
     originalRoom.capacities = room.capacities;
@@ -62,13 +62,13 @@ export class DataService {
   }
 
   deleteRoom(id: number): Observable<any> {
-    const room = this.rooms.find(r => r.id === id) as Room;
+    const room = this.rooms.find(r => r.id === id) ;
     this.rooms.splice(this.rooms.indexOf(room), 1);
     return of(null);
   }
 
   deleteUser(id: number): Observable<any> {
-    const user = this.users.find(u => u.id === id) as User;
+    const user = this.users.find(u => u.id === id);
     this.users.splice(this.users.indexOf(user), 1);
     return of(user);
   }
@@ -82,11 +82,11 @@ export class DataService {
   }
   
   getBooking(id: number) : Observable<Booking> {
-    return of(this.bookings.find(b => b.id === id) as Booking);
+    return of(this.bookings.find(b => b.id === id));
   }
 
   saveBooking(booking: Booking) : Observable<Booking> {
-    const existingBooking = this.bookings.find( b => b.id === booking.id) as Booking;
+    const existingBooking = this.bookings.find( b => b.id === booking.id);
     existingBooking.date = booking.date;
     existingBooking.startTime = booking.startTime;
     existingBooking.endTime = booking.endTime;
@@ -110,7 +110,7 @@ export class DataService {
 
   deleteBooking(id : number) : Observable<any> {
     const booking= this.bookings.find( b => b.id === id);
-    this.bookings.splice(this.bookings.indexOf(booking as Booking)  ,1);
+    this.bookings.splice(this.bookings.indexOf(booking)  ,1);
     return of(null);
   }
 

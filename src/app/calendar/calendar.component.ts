@@ -41,7 +41,7 @@ export class CalendarComponent implements OnInit {
   }
 
   deleteBooking(id :number) {
-    this.dataService.deleteBooking(id).subscribe();
+    this.dataService.deleteBooking(id).subscribe(next => this.router.navigate(['']));
   }
 
   dateChanged() {

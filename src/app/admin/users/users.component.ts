@@ -29,7 +29,7 @@ export class UsersComponent implements OnInit {
         const id = param['id'];
         this.action = param['action'];
         if (id) {
-          this.userSelected = (this.users.find(user => user.id === +id)) as User;
+          this.userSelected = (this.users.find(user => user.id === +id));
         }
       }
     )

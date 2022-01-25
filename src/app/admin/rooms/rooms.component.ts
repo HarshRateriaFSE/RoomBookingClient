@@ -29,7 +29,7 @@ export class RoomsComponent implements OnInit {
         this.action = '';
         const id = param['id'];
         if (id) {
-          this.selectedRoom = (this.rooms.find(room => room.id === +id)) as Room;
+          this.selectedRoom = (this.rooms.find(room => room.id === +id));
           this.action = param['action'];
 
         }

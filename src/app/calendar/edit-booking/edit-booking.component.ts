@@ -16,7 +16,7 @@ export class EditBookingComponent implements OnInit {
   booking: Booking;
   rooms: Array<Room>;
   layouts = Object.keys(Layout);
-  layoutEnum = Layout as any;
+  layoutEnum = Layout;
   users: Array<User>;
 
   constructor(private dataService: DataService,
