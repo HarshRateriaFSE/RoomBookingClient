@@ -1,6 +1,8 @@
 import { formatDate } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { map, Observable, of } from 'rxjs';
+import { environment } from 'src/environments/environment';
 import { Booking } from './model/Booking';
 import { Layout, LayoutCapacity, Room } from './model/Room';
 import { User } from './model/User';
@@ -10,15 +12,37 @@ import { User } from './model/User';
 })
 export class DataService {
 
- 
+
 
 
   getRooms(): Observable<Array<Room>> {
-    return of(null);
+    return this.http.get<Array<Room>>(environment.restUrl + '/api/rooms')
+      .pipe(
+        map(
+          data => {
+            const rooms = new Array<Room>();
+            for (const room of data) {
+              rooms.push(Room.fromHttp(room));
+            }
+            return rooms;
+          }
+        )
+      );
   }
 
   getUsers(): Observable<Array<User>> {
-    return of(null);
+    return this.http.get<Array<User>>(environment.restUrl + '/api/users')
+      .pipe(
+        map(
+          data => {
+            const users = new Array<User>();
+            for (const user of data) {
+              users.push(User.fromHttp(user));
+            }
+            return users;
+          }
+        )
+      );
 
   }
 
@@ -56,32 +80,41 @@ export class DataService {
     return of(null);
   }
 
-  getBookings(date: string) : Observable<Array<Booking>> {
+  getBookings(date: string): Observable<Array<Booking>> {
     return of(null);
-  }
-  
-  getBooking(id: number) : Observable<Booking> {
-    return of(null);
-   
   }
 
-  saveBooking(booking: Booking) : Observable<Booking> {
+  getBooking(id: number): Observable<Booking> {
     return of(null);
 
   }
 
-  addBooking(newBooking: Booking) : Observable<Booking> {
+  saveBooking(booking: Booking): Observable<Booking> {
     return of(null);
 
   }
 
-  deleteBooking(id : number) : Observable<any> {
+  addBooking(newBooking: Booking): Observable<Booking> {
     return of(null);
 
   }
 
-  constructor() {
-    
+  deleteBooking(id: number): Observable<any> {
+    return of(null);
+
+  }
+
+  getUser(id: number): Observable<User> {
+    return this.http.get<User>(environment.restUrl + '/api/users/' + id)
+      .pipe(
+        map(data => {
+          return User.fromHttp(data)
+        })
+      );
+  }
+
+  constructor(private http: HttpClient) {
+
 
   }
 }
